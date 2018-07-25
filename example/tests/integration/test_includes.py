@@ -129,6 +129,16 @@ def test_deep_included_data_on_list(multiple_entries, client):
         [entry.comments.filter(author__isnull=False).count() for entry in multiple_entries])
     assert author_count == expected_author_count, 'List author count is incorrect'
 
+    # Also include author on authors bio
+    response = client.get(reverse("entry-list") + '?include=authors.bio.author&page_size=5')
+    included = response.json().get('included')
+
+    assert len(response.json()['data']) == len(multiple_entries), (
+        'Incorrect entry count'
+    )
+    assert [x.get('type') for x in included] == [
+        'authorBios', 'authorBios', 'authors', 'authors'], 'List included types are incorrect'
+
 
 def test_deep_included_data_on_detail(single_entry, client):
     # Same test as in list but also ensures that intermediate resources (here comments' authors)

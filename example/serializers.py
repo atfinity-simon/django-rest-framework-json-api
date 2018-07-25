@@ -165,6 +165,11 @@ class AuthorSerializer(serializers.ModelSerializer):
         fields = ('name', 'email', 'bio', 'entries', 'type')
 
 
+AuthorBioSerializer.included_serializers = {
+    'author': AuthorSerializer,
+}
+
+
 class WriterSerializer(serializers.ModelSerializer):
     included_serializers = {
         'bio': AuthorBioSerializer
